@@ -1,0 +1,21 @@
+#!/bin/bash
+
+about_os=($(cat /etc/*release | grep -E '^ID=|VERSION_ID' | cut -d '=' -f2 | tr -d '"'))
+os_name=${about_os[0]}
+os_version=${about_os[1]}
+
+if [[ "$os_name" == "centos" ]] && [[ $os_version -ge 7 ]]
+then
+       if python3 --version &>/dev/null
+       then ./install_pbx_on_centos78.py -v=$os_version
+       else
+	       echo "Python3 is not installed. Start the installation"
+	       sleep 1
+               if yum -y install python3
+	       then
+		       ./install_pbx_on_centos78.py -v=$os_version
+	       else echo "An error occurred during python3 installation"
+	       fi
+       fi	     
+else echo "The program requires Centos version 7 o higher"
+fi
